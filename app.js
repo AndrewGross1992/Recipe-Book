@@ -20,13 +20,28 @@ async function fetchRecipe() {
         const data = await response.json();
         const parser = new DOMParser();
         const doc = parser.parseFromString(data.contents, 'text/html');
-        const title = doc.querySelector('h1') ? doc.querySelector('h1').innerText : "Unknown Recipe";
         
-        saveToStorage({ title: title });
+        // Look for the hidden JSON-LD recipe data
+        const script = doc.querySelector('script[type="application/ld+json"]');
+        let recipeData = { title: "Unknown Recipe" };
+        
+        if (script) {
+            const json = JSON.parse(script.innerText);
+            // Handle different types of JSON-LD structures
+            const recipe = Array.isArray(json) ? json.find(i => i['@type'] === 'Recipe') : json;
+            if (recipe) {
+                recipeData = {
+                    title: recipe.name,
+                    ingredients: recipe.recipeIngredient // This is the list!
+                };
+            }
+        }
+        
+        saveToStorage(recipeData);
         document.getElementById('recipeUrl').value = '';
         displayRecipes();
     } catch (error) {
-        alert("Couldn't grab the recipe automatically. Try manual entry!");
+        alert("This site's format is too complex to grab automatically.");
     }
 }
 
