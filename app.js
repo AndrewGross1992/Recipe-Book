@@ -2,41 +2,22 @@ window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const urlFromShortcut = params.get('url');
     
-    // This will tell us if it sees the URL or if it's "null"
-    alert("URL found: " + urlFromShortcut); 
-    
     if (urlFromShortcut) {
+        // If we found a URL, put it in the input and trigger the fetch
         const urlInput = document.getElementById('recipeUrl');
         if (urlInput) {
             urlInput.value = urlFromShortcut;
             fetchRecipe();
         }
+    } else {
+        displayRecipes();
     }
-    displayRecipes();
 });
 
-// 1. When the page loads, look for a "?url=" in the address bar
-window.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search);
-    const urlFromShortcut = params.get('url');
-    
-    if (urlFromShortcut) {
-        // We found a URL! Put it in the box and fetch it automatically
-        const urlInput = document.getElementById('recipeUrl');
-        if (urlInput) {
-            urlInput.value = urlFromShortcut;
-            fetchRecipe();
-        }
-    }
-    displayRecipes();
-});
-
-// 2. This function does the actual work of getting the recipe info
 async function fetchRecipe() {
     const url = document.getElementById('recipeUrl').value;
     if (!url) return;
 
-    // This fetches the website content through a proxy
     const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
     
     try {
@@ -46,27 +27,19 @@ async function fetchRecipe() {
         const doc = parser.parseFromString(data.contents, 'text/html');
         
         const script = doc.querySelector('script[type="application/ld+json"]');
-        let recipeData = { title: "Unknown Recipe", ingredients: ["No ingredients found automatically."] };
-        
         if (script) {
             const json = JSON.parse(script.innerText);
             const recipe = Array.isArray(json) ? json.find(i => i['@type'] === 'Recipe') : json;
             if (recipe) {
-                recipeData = {
-                    title: recipe.name,
-                    ingredients: recipe.recipeIngredient || []
-                };
+                saveRecipe(recipe.name, recipe.recipeIngredient || []);
+                document.getElementById('recipeUrl').value = '';
             }
         }
-        
-        saveRecipe(recipeData.title, recipeData.ingredients);
-        document.getElementById('recipeUrl').value = '';
     } catch (error) {
-        alert("Could not import automatically.");
+        alert("Import failed. Please check the URL or try another site.");
     }
 }
 
-// 3. Save to phone storage
 function saveRecipe(title, ingredients) {
     let recipes = JSON.parse(localStorage.getItem('myRecipes') || '[]');
     recipes.push({ title, ingredients });
@@ -74,7 +47,6 @@ function saveRecipe(title, ingredients) {
     displayRecipes();
 }
 
-// 4. Update the screen
 function displayRecipes() {
     const container = document.getElementById('recipe-container');
     const recipes = JSON.parse(localStorage.getItem('myRecipes') || '[]');
@@ -85,4 +57,11 @@ function displayRecipes() {
             <button onclick="deleteRecipe(${index})">Delete</button>
         </div>
     `).join('');
+}
+
+function deleteRecipe(index) {
+    let recipes = JSON.parse(localStorage.getItem('myRecipes') || '[]');
+    recipes.splice(index, 1);
+    localStorage.setItem('myRecipes', JSON.stringify(recipes));
+    displayRecipes();
 }
