@@ -67,8 +67,9 @@ function displayRecipes() {
     container.innerHTML = recipes.map((recipe, index) => `
         <div style="border: 1px solid #ddd; padding: 15px; margin-top: 15px; border-radius: 8px;">
             <h3>${recipe.title}</h3>
-            <button onclick="alert('Scaling math coming next!')">1/2</button>
-            <button onclick="alert('Scaling math coming next!')">x2</button>
+            <ul>${recipe.ingredients ? recipe.ingredients.map(i => `<li>${i}</li>`).join('') : 'No ingredients found.'}</ul>
+            <button onclick="alert('Scaling logic next!')">1/2</button>
+            <button onclick="alert('Scaling logic next!')">x2</button>
             <button style="color: red; margin-left: 10px;" onclick="deleteRecipe(${index})">Delete</button>
         </div>
     `).join('');
