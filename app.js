@@ -17,9 +17,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // --- 2. Manual & Web Fetcher ---
 async function fetchRecipe() {
+    // Get the URL from the input box
     const url = document.getElementById('recipeUrl').value;
     if (!url) return;
 
+    // Use a proxy to fetch the HTML content from the website
     const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
     
     try {
@@ -28,6 +30,7 @@ async function fetchRecipe() {
         const parser = new DOMParser();
         const doc = parser.parseFromString(data.contents, 'text/html');
         
+        // Look for the JSON data in the HTML
         const script = doc.querySelector('script[type="application/ld+json"]');
         let recipeData = { title: "Unknown Recipe", ingredients: ["No ingredients found automatically."] };
         
@@ -42,18 +45,12 @@ async function fetchRecipe() {
             }
         }
         
+        // Save the recipe and clear the input
         saveRecipe(recipeData.title, recipeData.ingredients);
         document.getElementById('recipeUrl').value = '';
     } catch (error) {
         alert("Could not import automatically. Paste ingredients manually.");
     }
-}
-
-function saveRecipe(title, ingredients) {
-    let recipes = JSON.parse(localStorage.getItem('myRecipes') || '[]');
-    recipes.push({ title, ingredients });
-    localStorage.setItem('myRecipes', JSON.stringify(recipes));
-    displayRecipes();
 }
 
 // --- 3. Storage & Display Helpers ---
