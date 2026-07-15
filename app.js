@@ -1,3 +1,5 @@
+alert("App is loading!");
+
 // 1. When the page loads, look for a "?url=" in the address bar
 window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
