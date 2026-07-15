@@ -2,26 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wife's Recipe Book</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>Recipe Book</title>
 </head>
 <body>
-    <h1>My Private Recipe Book</h1>
-    
-    <input type="text" id="recipeTitle" placeholder="Enter recipe name">
-    <button onclick="addRecipe()">Add Recipe</button>
-    
-    <hr>
-    
-    <input type="text" id="recipeUrl" placeholder="Paste recipe URL here">
-    <button onclick="fetchRecipe()">Import Recipe</button>
+    <h1>Add New Recipe</h1>
+    <input type="text" id="recipeTitle" placeholder="Recipe Name"><br>
+    <textarea id="recipeIngredients" placeholder="Paste ingredients here (one per line)"></textarea><br>
+    <button onclick="saveManualRecipe()">Save Recipe</button>
 
-    <div id="recipe-container">
-        </div>
-
+    <div id="recipe-container"></div>
     <script src="app.js"></script>
 </body>
 </html>
