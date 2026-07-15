@@ -1,0 +1,7 @@
+{
+    "name": "Recipe Book",
+    "short_name": "Recipes",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#ffffff"
+}
