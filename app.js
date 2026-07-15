@@ -15,28 +15,40 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 async function fetchRecipe() {
-    const url = document.getElementById('recipeUrl').value;
-    if (!url) return;
-
-    const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+    const urlInput = document.getElementById('recipeUrl');
+    const url = urlInput.value;
     
+    if (!url) {
+        alert("No URL found in the box!");
+        return;
+    }
+
+    // Try fetching
     try {
+        const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
         const response = await fetch(proxyUrl);
         const data = await response.json();
         const parser = new DOMParser();
         const doc = parser.parseFromString(data.contents, 'text/html');
         
         const script = doc.querySelector('script[type="application/ld+json"]');
-        if (script) {
-            const json = JSON.parse(script.innerText);
-            const recipe = Array.isArray(json) ? json.find(i => i['@type'] === 'Recipe') : json;
-            if (recipe) {
-                saveRecipe(recipe.name, recipe.recipeIngredient || []);
-                document.getElementById('recipeUrl').value = '';
-            }
+        
+        if (!script) {
+            alert("Could not find recipe data on this page. (No JSON-LD found)");
+            return;
+        }
+
+        const json = JSON.parse(script.innerText);
+        const recipe = Array.isArray(json) ? json.find(i => i['@type'] === 'Recipe') : json;
+        
+        if (recipe) {
+            saveRecipe(recipe.name, recipe.recipeIngredient || []);
+            urlInput.value = '';
+        } else {
+            alert("Found JSON, but it doesn't look like a recipe.");
         }
     } catch (error) {
-        alert("Import failed. Please check the URL or try another site.");
+        alert("Fetch error: " + error.message);
     }
 }
 
