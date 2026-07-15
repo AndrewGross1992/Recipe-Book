@@ -1,13 +1,19 @@
 // --- 1. Auto-Import on Load ---
-window.onload = function() {
+window.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const urlFromShortcut = params.get('url');
+    
     if (urlFromShortcut) {
-        document.getElementById('recipeUrl').value = urlFromShortcut;
-        fetchRecipe(); 
+        console.log("Shortcut URL detected:", urlFromShortcut);
+        
+        const urlInput = document.getElementById('recipeUrl');
+        if (urlInput) {
+            urlInput.value = urlFromShortcut;
+            fetchRecipe();
+        }
     }
     displayRecipes();
-};
+});
 
 // --- 2. Manual & Web Fetcher ---
 async function fetchRecipe() {
