@@ -18,31 +18,38 @@ async function fetchRecipe() {
     try {
         const response = await fetch(proxyUrl);
         const data = await response.json();
+        
+        // Let's check if the proxy actually got the website data
+        if (!data.contents) {
+            alert("Proxy error: Could not reach the website.");
+            return;
+        }
+
         const parser = new DOMParser();
         const doc = parser.parseFromString(data.contents, 'text/html');
         
-        // Look for the hidden JSON-LD recipe data
         const script = doc.querySelector('script[type="application/ld+json"]');
-        let recipeData = { title: "Unknown Recipe" };
-        
-        if (script) {
-            const json = JSON.parse(script.innerText);
-            // Handle different types of JSON-LD structures
-            const recipe = Array.isArray(json) ? json.find(i => i['@type'] === 'Recipe') : json;
-            if (recipe) {
-                recipeData = {
-                    title: recipe.name,
-                    ingredients: recipe.recipeIngredient // This is the list!
-                };
-            }
+        if (!script) {
+            alert("No recipe data found on this page. The site might not use standard formatting.");
+            return;
         }
+
+        const json = JSON.parse(script.innerText);
+        const recipe = Array.isArray(json) ? json.find(i => i['@type'] === 'Recipe') : json;
         
-        saveToStorage(recipeData);
-        document.getElementById('recipeUrl').value = '';
-        displayRecipes();
+        if (recipe) {
+            saveToStorage({ 
+                title: recipe.name, 
+                ingredients: recipe.recipeIngredient 
+            });
+            displayRecipes();
+        } else {
+            alert("Found a script, but it didn't look like a recipe.");
+        }
     } catch (error) {
-        alert("This site's format is too complex to grab automatically.");
+        alert("Error: " + error.message);
     }
+}
 }
 
 // --- 3. Storage Helpers ---
