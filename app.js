@@ -1,4 +1,19 @@
-alert("App is loading!");
+window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const urlFromShortcut = params.get('url');
+    
+    // This will tell us if it sees the URL or if it's "null"
+    alert("URL found: " + urlFromShortcut); 
+    
+    if (urlFromShortcut) {
+        const urlInput = document.getElementById('recipeUrl');
+        if (urlInput) {
+            urlInput.value = urlFromShortcut;
+            fetchRecipe();
+        }
+    }
+    displayRecipes();
+});
 
 // 1. When the page loads, look for a "?url=" in the address bar
 window.addEventListener('DOMContentLoaded', () => {
