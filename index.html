@@ -3,16 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe Book</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>My Recipe Book</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f9; }
+        h1 { color: #333; text-align: center; }
+        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
+        input { padding: 12px; border: 1px solid #ccc; border-radius: 8px; }
+        button { padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        #recipe-container { display: flex; flex-direction: column; gap: 20px; }
+        .recipe-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    </style>
 </head>
 <body>
+
     <h1>My Recipe Book</h1>
-    
-    <h3>Paste Recipe Text</h3>
-    <textarea id="rawRecipe" placeholder="Paste the full recipe text here..." style="width:100%; height:150px;"></textarea><br>
-    <button onclick="smartImport()">Extract & Save</button>
+
+    <div class="input-group">
+        <input type="text" id="recipeUrl" placeholder="Paste recipe URL here...">
+        <button onclick="fetchRecipe()">Extract & Save</button>
+    </div>
 
     <div id="recipe-container"></div>
 
