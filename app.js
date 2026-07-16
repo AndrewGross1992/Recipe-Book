@@ -1,4 +1,7 @@
 // Function to handle the manual URL input
+
+alert("The JavaScript file is connected!");
+
 async function fetchRecipe() {
     const urlInput = document.getElementById('recipeUrl').value;
     
