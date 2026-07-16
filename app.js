@@ -1,11 +1,16 @@
-// This runs whenever you open your Recipe Book
 window.onload = function() {
-    const temp = localStorage.getItem('tempRecipe');
-    if (temp) {
-        const recipe = JSON.parse(temp);
+    // 1. Check if a recipe is being passed via the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const recipeData = urlParams.get('recipe');
+    
+    if (recipeData) {
+        const recipe = JSON.parse(decodeURIComponent(recipeData));
         saveRecipe(recipe.title, recipe.ingredients);
-        localStorage.removeItem('tempRecipe'); // Clear it so it doesn't re-save
+        // Clean up the URL so it doesn't re-save if you refresh
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
+    
+    // 2. Display existing recipes
     displayRecipes();
 };
 
