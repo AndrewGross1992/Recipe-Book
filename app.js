@@ -3,10 +3,13 @@ window.onload = function() {
     const recipeData = urlParams.get('recipe');
     
     if (recipeData) {
-        const recipe = JSON.parse(decodeURIComponent(recipeData));
-        // We temporarily store it in a 'pending' slot
-        localStorage.setItem('pendingRecipe', JSON.stringify(recipe));
-        window.history.replaceState({}, document.title, window.location.pathname);
+        try {
+            const recipe = JSON.parse(decodeURIComponent(recipeData));
+            if (recipe.title && recipe.title !== "undefined") {
+                localStorage.setItem('pendingRecipe', JSON.stringify(recipe));
+            }
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (e) { console.error("Error parsing data:", e); }
     }
     displayRecipes();
 };
@@ -33,12 +36,10 @@ function displayRecipes() {
 
     container.innerHTML = "";
 
-    // Show the "Click here" link if there is a pending recipe
     if (pending) {
         container.innerHTML += `<div class="pending-link"><a href="#" onclick="revealPending(); return false;">Click here to add: ${pending.title}</a></div>`;
     }
 
-    // Show saved cards
     container.innerHTML += recipes.map((recipe, index) => `
         <div class="recipe-card">
             <h3>${recipe.title}</h3>
