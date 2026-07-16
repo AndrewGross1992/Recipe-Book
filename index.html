@@ -1,1 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Recipe Book</title>
+    <style>
+        body { font-family: 'Courier New', Courier, monospace; padding: 20px; background-color: #f4f4f9; max-width: 600px; margin: 0 auto; }
+        h1 { color: #333; text-align: center; }
+        #recipe-container { display: flex; flex-direction: column; gap: 20px; }
+        .recipe-card { 
+            background: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #ccc;
+            background-image: linear-gradient(#e0e0e0 1px, transparent 1px); background-size: 100% 1.5em; line-height: 1.5em;
+        }
+        .recipe-card h3 { text-decoration: underline; margin-top: 0; padding-bottom: 0.5em; }
+        ul { list-style-type: none; padding-left: 0; }
+        li { padding-bottom: 0.5em; }
+    </style>
+</head>
+<body>
+
+    <h1>My Recipe Book</h1>
+    <div id="recipe-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
 
