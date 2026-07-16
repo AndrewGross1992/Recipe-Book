@@ -1,32 +1,43 @@
 async function fetchRecipe() {
-    const url = document.getElementById('recipeUrl').value;
+    const urlInput = document.getElementById('recipeUrl');
+    const url = urlInput.value;
+    
     if (!url) return;
 
-    // Use a proxy to fetch the content since browsers block direct access
+    // Use a different proxy service or a more direct fetch
     const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
     
     try {
         const response = await fetch(proxyUrl);
+        if (!response.ok) throw new Error("Proxy server error: " + response.status);
+        
         const data = await response.json();
+        
+        // This log helps us see what the proxy actually returned in the browser console
+        console.log("Proxy Data:", data);
+        
         const parser = new DOMParser();
         const doc = parser.parseFromString(data.contents, 'text/html');
         
-        // Most recipe sites use JSON-LD for data
         const script = doc.querySelector('script[type="application/ld+json"]');
-        if (script) {
-            const json = JSON.parse(script.innerText);
-            // Handle cases where JSON-LD is an array or a single object
-            const recipe = Array.isArray(json) ? json.find(i => i['@type'] === 'Recipe') : json;
-            
-            if (recipe) {
-                saveRecipe(recipe.name, recipe.recipeIngredient || []);
-                document.getElementById('recipeUrl').value = ''; // Clear the input
-            } else {
-                alert("Could not find recipe data on this page.");
-            }
+        
+        if (!script) {
+            alert("Success! But no recipe data found on this specific page.");
+            return;
+        }
+
+        const json = JSON.parse(script.innerText);
+        const recipe = Array.isArray(json) ? json.find(i => i['@type'] === 'Recipe') : json;
+        
+        if (recipe) {
+            saveRecipe(recipe.name, recipe.recipeIngredient || []);
+            urlInput.value = '';
+        } else {
+            alert("Found JSON, but it's not a recipe.");
         }
     } catch (error) {
-        alert("Fetch error: " + error.message);
+        // This will tell us if it's a network issue
+        alert("Fetch failed. Error details: " + error.message);
     }
 }
 
